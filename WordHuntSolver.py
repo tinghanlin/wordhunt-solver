@@ -1,9 +1,9 @@
 ##################################################
 ## GamePigeon Word Hunt Solver:
-## A player can enter 6 letters in the interactive window, then the program would show the words found
+## A player can enter 16 letters in the interactive window, then the program would show the words found
 ##################################################
 ## Author: Ting-Han Lin
-## Copyright: Copyright 2021, GamePigeon Anagram Solver
+## Copyright: Copyright 2021, GamePigeon Word Hunt Solver
 ## Credits: [Raghav Gurung (https://medium.com/python-anagram-solver/python-anagram-solver-edb2646b65f8)]
 ## Version: 1.0.0
 ## Maintainer: Ting-Han Lin
@@ -53,6 +53,7 @@ def searchWords(mystring, word_series):
     output.sort(key=len, reverse=True) #sorts by descending length
     return output
 
+#define the structure of the 4x4 grid
 class Cell:
     def __init__(self, rol, col, letter, check):
         self.row = rol
@@ -60,6 +61,7 @@ class Cell:
         self.letter= letter
         self.check = False
 
+#initialize each cell in the grid
 c1  = Cell(0, 0, "A", False)
 c2  = Cell(0, 1, "B", False)
 c3  = Cell(0, 2, "C", False)
@@ -77,26 +79,31 @@ c14 = Cell(3, 1, "N", False)
 c15 = Cell(3, 2, "O", False)
 c16 = Cell(3, 3, "P", False)
 
+#two always to organize the cells
 grid = [c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12,c13,c14,c15,c16]
 struct_grid = [[c1,c2,c3,c4],[c5,c6,c7,c8],[c9,c10,c11,c12],[c13,c14,c15,c16]]
 
-#start_cell = [c1]
-#word = ['A', 'B', 'C']
+#this function finds the vocabulary in the grid
+#using a top-down recursing method
+#e.g. start_cell = [c7] 
+#e.g. word = ['T', 'R', 'A', 'W', 'L', 'N', 'E', 'T', 'S']
 def wordhunt(start_cell, word):
-    #print("word: ", word)
     
     #base case
     if len(word) == 1:
         return 1 # word is found
     
+    #pop the first letter out for the next recursion
     word.pop(0)
     
+    #store neighbor cells if matches the next alphabet
     next_cell=[]
     
+    #traverse through the grid
+    #start_cell may seem confusing, but it is essentially next_cell in the recursion
     for cell in start_cell:
     
         if cell.row == 0 and cell.col == 0: #upper left
-            
             #go right
             if struct_grid[cell.row][cell.col+1].letter == word[0] and struct_grid[cell.row][cell.col+1].check == False:
                 struct_grid[cell.row][cell.col+1].check = True
@@ -111,9 +118,9 @@ def wordhunt(start_cell, word):
             if struct_grid[cell.row+1][cell.col].letter == word[0] and struct_grid[cell.row+1][cell.col].check == False:
                 struct_grid[cell.row+1][cell.col].check = True
                 next_cell.append(struct_grid[cell.row+1][cell.col])
-        
-        elif cell.row == 0 and cell.col == 3: #upper right corner 
             
+        elif cell.row == 0 and cell.col == 3: #upper right corner 
+
             #go left
             if struct_grid[cell.row][cell.col-1].letter == word[0] and struct_grid[cell.row][cell.col-1].check == False:
                 struct_grid[cell.row][cell.col-1].check = True
@@ -128,8 +135,8 @@ def wordhunt(start_cell, word):
             if struct_grid[cell.row+1][cell.col].letter == word[0] and struct_grid[cell.row+1][cell.col].check == False:
                 struct_grid[cell.row+1][cell.col].check = True
                 next_cell.append(struct_grid[cell.row+1][cell.col])
-            
-        elif cell.row == 3 and cell.col == 0: #bottom left corner 
+        
+        elif cell.row == 3 and cell.col == 0: #bottom left corner
             
             #go up
             if struct_grid[cell.row-1][cell.col].letter == word[0] and struct_grid[cell.row-1][cell.col].check == False:
@@ -147,7 +154,7 @@ def wordhunt(start_cell, word):
                 next_cell.append(struct_grid[cell.row][cell.col+1])
             
         elif cell.row == 3 and cell.col == 3: # bottom right corner
-            
+
             #go up
             if struct_grid[cell.row-1][cell.col].letter == word[0] and struct_grid[cell.row-1][cell.col].check == False:
                 struct_grid[cell.row-1][cell.col].check = True
@@ -164,6 +171,7 @@ def wordhunt(start_cell, word):
                 next_cell.append(struct_grid[cell.row][cell.col-1])
             
         elif cell.row == 0: #upper edge
+
             #go right
             if struct_grid[cell.row][cell.col+1].letter == word[0] and struct_grid[cell.row][cell.col+1].check == False:
                 struct_grid[cell.row][cell.col+1].check = True
@@ -184,12 +192,13 @@ def wordhunt(start_cell, word):
                 struct_grid[cell.row+1][cell.col-1].check = True
                 next_cell.append(struct_grid[cell.row+1][cell.col-1])
                 
-            #go up
-            if struct_grid[cell.row-1][cell.col].letter == word[0] and struct_grid[cell.row-1][cell.col].check == False:
-                struct_grid[cell.row-1][cell.col].check = True
-                next_cell.append(struct_grid[cell.row-1][cell.col])
+            #go left
+            if struct_grid[cell.row][cell.col-1].letter == word[0] and struct_grid[cell.row][cell.col-1].check == False:
+                struct_grid[cell.row][cell.col-1].check = True
+                next_cell.append(struct_grid[cell.row][cell.col-1])
                 
         elif cell.row == 3: #lower edge
+
             #go up left
             if struct_grid[cell.row-1][cell.col-1].letter == word[0] and struct_grid[cell.row-1][cell.col-1].check == False:
                 struct_grid[cell.row-1][cell.col-1].check = True
@@ -214,9 +223,10 @@ def wordhunt(start_cell, word):
             if struct_grid[cell.row][cell.col+1].letter == word[0] and struct_grid[cell.row][cell.col+1].check == False:
                 struct_grid[cell.row][cell.col+1].check = True
                 next_cell.append(struct_grid[cell.row][cell.col+1])
-                
+  
         elif cell.col == 3: #right edge
-           #go down
+
+            #go down
             if struct_grid[cell.row+1][cell.col].letter == word[0] and struct_grid[cell.row+1][cell.col].check == False:
                 struct_grid[cell.row+1][cell.col].check = True
                 next_cell.append(struct_grid[cell.row+1][cell.col])
@@ -240,14 +250,15 @@ def wordhunt(start_cell, word):
             if struct_grid[cell.row][cell.col-1].letter == word[0] and struct_grid[cell.row][cell.col-1].check == False:
                 struct_grid[cell.row][cell.col-1].check = True
                 next_cell.append(struct_grid[cell.row][cell.col-1])
-                
+              
         elif cell.col == 0: #left edge
+
             #go right
             if struct_grid[cell.row][cell.col+1].letter == word[0] and struct_grid[cell.row][cell.col+1].check == False:
                 struct_grid[cell.row][cell.col+1].check = True
                 next_cell.append(struct_grid[cell.row][cell.col+1])
             
-             #go bottom right
+            #go bottom right
             if struct_grid[cell.row+1][cell.col+1].letter == word[0] and struct_grid[cell.row+1][cell.col+1].check == False:
                 struct_grid[cell.row+1][cell.col+1].check = True
                 next_cell.append(struct_grid[cell.row+1][cell.col+1])
@@ -266,14 +277,15 @@ def wordhunt(start_cell, word):
             if struct_grid[cell.row-1][cell.col+1].letter == word[0] and struct_grid[cell.row-1][cell.col+1].check == False:
                 struct_grid[cell.row-1][cell.col+1].check = True
                 next_cell.append(struct_grid[cell.row-1][cell.col+1])
-                
+               
         else: #middle
+
             #go right
             if struct_grid[cell.row][cell.col+1].letter == word[0] and struct_grid[cell.row][cell.col+1].check == False:
                 struct_grid[cell.row][cell.col+1].check = True
                 next_cell.append(struct_grid[cell.row][cell.col+1])
             
-             #go bottom right
+            #go bottom right
             if struct_grid[cell.row+1][cell.col+1].letter == word[0] and struct_grid[cell.row+1][cell.col+1].check == False:
                 struct_grid[cell.row+1][cell.col+1].check = True
                 next_cell.append(struct_grid[cell.row+1][cell.col+1])
@@ -321,13 +333,12 @@ def wordhunt(start_cell, word):
     if len(next_cell)==0:
         return 0 #no word
     else:
-        #print("word hunt function runs")
         return wordhunt(next_cell, word) #the first letter of the word here is removed
 
+#this function takes word from anagram and apply it to wordhunt function
 def findable_word(searchWord):
     findable_word = []
     for vocab in searchWord:
-        #print("Vocab: ", vocab)
         vocab_letters = list(vocab)
         start_cell = []
 
@@ -338,11 +349,17 @@ def findable_word(searchWord):
 
         #there will be at least one item in start_cell
         for cell in start_cell:
-            #I need the cell to be in a list
+            #the cell needs to be in a list
             tmp_list = [cell]
 
-            #tmp_list should be in this format: [c1]
-            #vocab_letters should be in this format: ['A', 'B', 'C']
+            ##IMPORTANT HERE##
+            #since we use pop() in wordhunt function,
+            #we need to resign the letters to vocab_letters
+            # to ensure the word completeness
+            vocab_letters = list(vocab)
+
+            #e.g. tmp_list should be in this format: [c1]
+            #e.g. vocab_letters should be in this format: ['A', 'B', 'C']
             res=wordhunt(tmp_list, vocab_letters)
 
             #initialize the grid
@@ -354,7 +371,6 @@ def findable_word(searchWord):
                 findable_word.append(vocab)
                 break
 
-                
     ###DEBUG###
     '''
     for item in findable_word:
@@ -366,7 +382,7 @@ def findable_word(searchWord):
 #convert list to string
 def listToString(s): 
     
-    # initialize an empty string
+    # initialize an space string
     str1 = " " 
     
     # return string  
